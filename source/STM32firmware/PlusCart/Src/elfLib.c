@@ -138,7 +138,7 @@ int loadElf(uint8_t* elfBuffer, uint32_t metaCount, SectionMetaEntry meta[], uin
 				return 0;
 			}
 		}
-		else if (strCmp(name, "vcsWrite3"))
+		else if (strCmp(name, "vcsWrite3") || strCmp(name, "vcsWrite4"))
 		{
 			*usesVcsWrite3 = 1;
 		}

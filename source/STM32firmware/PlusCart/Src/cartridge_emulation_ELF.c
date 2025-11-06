@@ -30,6 +30,7 @@ NameAddressMapEntry NameAddressMap[] = {
 	{(uint32_t)vcsLdxForBusStuff2, "vcsLdxForBusStuff2" },
 	{(uint32_t)vcsLdyForBusStuff2, "vcsLdyForBusStuff2" },
 	{(uint32_t)vcsWrite3, "vcsWrite3" },
+	{(uint32_t)vcsWrite4, "vcsWrite4" },
 	{(uint32_t)vcsJmp3, "vcsJmp3" },
 	{(uint32_t)vcsNop2, "vcsNop2" },
 	{(uint32_t)vcsNop2n, "vcsNop2n" },
