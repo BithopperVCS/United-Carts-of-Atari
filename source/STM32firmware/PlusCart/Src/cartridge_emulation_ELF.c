@@ -94,7 +94,7 @@ int launch_elf_file(const char* filename, uint32_t buffer_size, uint8_t* buffer)
 	if(mainArgs[MP_SYSTEM_TYPE] == ST_PAL_2600 || mainArgs[MP_SYSTEM_TYPE] == ST_PAL60_2600)
 		NameAddressMap[0].address = (uint32_t)&Pal2600[0];
 
-	int usesVcsWrite3;
+	int usesBusStuffing;
 	uint32_t pMainAddress;
 	uint32_t metaCount = ((ElfHeader*)buffer)->e_shnum;
 	SectionMetaEntry* meta = malloc(sizeof(SectionMetaEntry) * metaCount);
@@ -103,7 +103,7 @@ int launch_elf_file(const char* filename, uint32_t buffer_size, uint8_t* buffer)
 		exit_cartridge(0x1100, 0x1000);
 		return 0;
 	}
-	if (!loadElf(buffer, metaCount, meta, &pMainAddress, &usesVcsWrite3))
+	if (!loadElf(buffer, metaCount, meta, &pMainAddress, &usesBusStuffing))
 	{
 		exit_cartridge(0x1100, 0x1000);
 		return 0;
@@ -112,7 +112,7 @@ int launch_elf_file(const char* filename, uint32_t buffer_size, uint8_t* buffer)
 	runPreInitFuncs(metaCount, meta);
 	runInitFuncs(metaCount, meta);
 
-	if(usesVcsWrite3)
+	if(usesBusStuffing)
 		vcsInitBusStuffing();
 
 	vcsEndOverblank();

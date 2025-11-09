@@ -398,7 +398,7 @@ void vcsWrite3(uint8_t ZP, uint8_t data)
 __attribute__((long_call, section(".RamFunc")))
 void vcsWrite4(uint16_t address, uint8_t data)
 {
-    InjectRomByte(opcodeLookup[data] + 8);
+    InjectRomByte(opcodeLookup[data] + 8); // Adding 8 to the opcode changes the address mode from zero page to absolute.
     InjectRomByte((uint8_t)address);
     InjectRomByte((uint8_t)(address >> 8));
 
