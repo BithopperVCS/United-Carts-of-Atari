@@ -137,7 +137,7 @@ const char *status_message[]__attribute__((section(".flash01#"))) = {
 #if MENU_TYPE == UNOCART
 	"UnoCart 2600",
 #else
-	"PlusCart(+)",
+	"PlusCart(++)",
 #endif
 	"Select WiFi Network",
 	"No WiFi",
@@ -890,6 +890,34 @@ enum e_status_message buildMenuFromPath( MENU_ENTRY *d )  {
 			}
 			*curPath = 0;
 		}
+		else if (strstr(curPath, MENU_TEXT_WIFI_FIRMWARE_UPDATE_USER) != NULL) {
+			uint32_t bytes_to_read = d->filesize - 0x4000;
+#if USE_WIFI
+			// Replace menu text with actual filename in curPath
+			char *menu_pos = strstr(curPath, MENU_TEXT_WIFI_FIRMWARE_UPDATE_USER);
+			if(menu_pos != NULL){
+				strcpy(menu_pos, "pluscart.bin");
+			}
+			uint32_t bytes_to_ram = d->filesize > FIRMWARE_MAX_RAM ? FIRMWARE_MAX_RAM : d->filesize;
+			uint32_t bytes_read = esp8266_PlusStore_API_file_request( buffer, curPath, 0, 0x4000 );
+			
+			bytes_read += esp8266_PlusStore_API_file_request( &buffer[0x4000], curPath, 0x8000, (bytes_to_ram - 0x8000));
+			if (d->filesize > FIRMWARE_MAX_RAM ){
+				bytes_read += esp8266_PlusStore_API_file_request( ((uint8_t*)0x10000000), curPath, FIRMWARE_MAX_RAM, ( d->filesize - FIRMWARE_MAX_RAM) );
+			}
+#else
+			uint32_t bytes_read = 0;
+#endif
+			
+			if(bytes_read == bytes_to_read ){
+				__disable_irq();
+				HAL_FLASH_Unlock();
+				flash_firmware_update(bytes_read);
+			}else{
+				menuStatusMessage = download_failed;
+			}
+			*curPath = 0;
+		}
 #if USE_SD_CARD
 		else if (strstr(curPath, MENU_TEXT_SEARCH_FOR_ROM) == curPath) {
 			// Cart with SD and WiFi will search only here (SD) ! -> maybe use "Search SD ROM" ?
@@ -954,6 +982,16 @@ enum e_status_message buildMenuFromPath( MENU_ENTRY *d )  {
     		trim_path = esp8266_file_list(curPath, &dst, &num_menu_entries, plus_store_status, input_field);
     		if(*input_field)
     			menuStatusMessage = STATUS_MESSAGE_STRING;
+    		
+    		// Transform pluscart.bin filename to firmware update menu text
+    		for(int i = 0; i < num_menu_entries; i++){
+    			if(strcasecmp(menu_entries[i].entryname, "pluscart.bin") == 0){
+    				// Replace filename with user-friendly menu text
+    				strcpy(menu_entries[i].entryname, MENU_TEXT_WIFI_FIRMWARE_UPDATE_USER);
+    				menu_entries[i].type = Menu_Action;
+    				break;
+    			}
+    		}
         }else if(strlen(curPath) == 0){
         	make_menu_entry(&dst, MENU_TEXT_WIFI_RECONNECT, Menu_Action);
     	}
