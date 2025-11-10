@@ -62,6 +62,7 @@
 #define MENU_TEXT_PRIVATE_KEY               "Private Key"
 #define MENU_TEXT_FIRMWARE_UPDATE           "** WiFi Firmware Update **"
 #define MENU_TEXT_SD_FIRMWARE_UPDATE        "** SD-Card Firmware Update **"
+#define MENU_TEXT_WIFI_FIRMWARE_UPDATE_USER "** USER OTA FIRMWARE UPDATE **"
 #define MENU_TEXT_OFFLINE_ROM_UPDATE        "Download Offline ROMs"
 #define MENU_TEXT_PLUS_CONNECT              "PlusStore Connect"
 #define MENU_TEXT_PLUS_REMOVE               "PlusStore Disconnect"
